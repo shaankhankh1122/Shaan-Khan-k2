@@ -1,6 +1,6 @@
-# Priyansh Bot v2
+# afran Bot v2
 
-Welcome to **Priyansh Bot v2**! This is a powerful and customizable bot built for automating various tasks on Facebook Messenger.
+Welcome to **afran Bot v2**! This is a powerful and customizable bot built for automating various tasks on Facebook Messenger.
 
 ## Table of Contents
 
@@ -24,12 +24,12 @@ To install the bot, follow these steps:
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/Priyansh-11/Priyansh-bot-v2.git
+    git clone https://github.com/afran-11/afran-bot-v2.git
     ```
 
 2. **Navigate to the project directory**:
     ```bash
-    cd Priyansh-bot-v2
+    cd afran-bot-v2
     ```
 
 3. **Install the dependencies**:
@@ -46,10 +46,10 @@ To install the bot, follow these steps:
 
 This project supports two FCA (Facebook Chat API) options:
 
-1. **fca-priyansh**
-2. **priyanshu-fca** (Recommended)
+1. **fca-afran**
+2. **afran-fca** (Recommended)
 
-You can choose to use either of these options, but it's recommended to use **priyanshu-fca** for the best performance and stability.
+You can choose to use either of these options, but it's recommended to use **afran-fca** for the best performance and stability.
 
 ## Usage
 
