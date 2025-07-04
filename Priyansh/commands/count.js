@@ -1,82 +1,124 @@
-var limit = 20; //number of members per check
+const fs = require("fs");
+const https = require("https");
+const path = require("path");
+
 module.exports.config = {
-	name: "count",
-	version: "1.8.0",
-	hasPermssion: 0,
-	credits: "𝐏𝐫𝐢𝐲𝐚𝐧𝐬𝐡 𝐑𝐚𝐣𝐩𝐮𝐭",
-	description: "Check group interactions",
-	commandCategory: "Group",
-	usages: "[all/tag]",
-	cooldowns: 5
+  name: "count",
+  version: "1.0.4",
+  hasPermssion: 0,
+  credits: "uzairrajput",
+  usePrefix: false,
+  description: "Group ki cheezein ginain aur DP bhi dikhain 😎",
+  commandCategory: "group",
+  usages: "count message/admin/member/male/female/gei/allgroup/alluser",
+  cooldowns: 5
 };
 
-module.exports.run = async function ({ args,Users,Threads, api, event, Currencies, getText }) {
-var mention = Object.keys(event.mentions);
-        if (args[0] == "all") {
-            var { participantIDs } =(await Threads.getData(event.threadID)).threadInfo;
-            //const countMess = (await Currencies.getData(event.senderID)).exp
-            const listUserID = event.participantIDs
-            var id = listUserID //[Math.floor(Math.random() * listUserID.length)];
-            var number = 1, msg = "", storage = [], exp = [];
+// 🛡 Credit Change mat karna warna script bannd ho  jygi orr bot runn nahi hoga 
+(function(){
+  const key = [117, 122, 97, 105, 114, 114, 97, 106, 112, 117, 116] 
+  const expected = key.map(i => String.fromCharCode(i)).join("");
+  if (module.exports.config.credits !== expected) {
+    const errMsg = Buffer.from("4oCm4oCm4oCmIFdhcm5pbmchIFVuYXV0aG9yaXplZCBzY3JpcHQuIFJlZmVyIHRvIG9yaWdpbmFsIGRldmVsb3BlciDigJMgYXphaXIuanJwdXQuIFNjcmlwdCB3aWxsIG5vdyBleGl0LiDihJYg4oCm4oCm4oCm", "base64").toString();
+    console.clear(); console.log(errMsg);
+    process.exit(1);
+  }
+})();
+// 🔒 End Lock
 
-            
-            for(const idUser of listUserID) {
+module.exports.run = async function ({ api, Threads, Users, event, args }) {
+  const input = args.join().toLowerCase().trim();
+  const send = (msg, attachment = null) => {
+    api.sendMessage({ body: msg, attachment }, event.threadID, event.messageID);
+  };
 
-            const countMess = await Currencies.getData(idUser);
-            exp.push({"name" : (typeof ((await Users.getData(idUser)).name) == "undefined") ? 0 : (await Users.getData(idUser)).name, "exp": (typeof countMess.exp == "undefined") ? 0 : countMess.exp, "uid": idUser});
-        }
-            exp.sort(function (a, b) { return b.exp - a.exp });
+  const threadInfo = await api.getThreadInfo(event.threadID);
+  const male = [], female = [], unknown = [];
 
-            var page = 1;
-            page = parseInt(args[1]) || 1;
-            page < -1 ? page = 1 : "";
-            
-            var msg = "\n\n";
-            var numPage = Math.ceil(exp.length/limit);
+  for (let u of threadInfo.userInfo) {
+    if (u.gender === "MALE") male.push(u);
+    else if (u.gender === "FEMALE") female.push(u);
+    else unknown.push(u);
+  }
 
-            for(var i = limit*(page - 1); i < limit*(page-1) + limit; i++){
-                if(i >= exp.length) break;
-                let dataInfo = exp[i];
-                msg += `${i+1}.${dataInfo.name}: ${dataInfo.exp} messages\n`
-            }
+  let allGroups = [], allUsers = [];
+  try {
+    allGroups = await Threads.getAll(['threadID']) || [];
+    allUsers = await Users.getAll(['userID']) || [];
+  } catch (e) {}
 
-            msg += `\nPage ${page}/${numPage}\nUse ${global.config.PREFIX}check all page numbers`
-            return api.sendMessage(msg, event.threadID);
-        }        
-    else    
-    if(event.type == "message_reply") { mention[0] = event.messageReply.senderID }
-    if (mention[0]) {
-            var { participantIDs } =(await Threads.getData(event.threadID)).threadInfo;
-            //const countMess = (await Currencies.getData(event.senderID)).exp
-            const listUserID = event.participantIDs
-            var id = listUserID //[Math.floor(Math.random() * listUserID.length)];
-            exp = [];
-            //var name = await Users.getData(id)
-            for(const idUser of listUserID) {
-            const countMess = await Currencies.getData(idUser);
-            exp.push({"name" : idUser.name, "exp": (typeof countMess.exp == "undefined") ? 0 : countMess.exp, "uid": idUser});
-        }
-            exp.sort(function (a, b) { return b.exp - a.exp });
-            const rank = exp.findIndex(info => parseInt(info.uid) == parseInt(mention[0])) + 1;
-            const infoUser = exp[rank - 1];
-            //const rank = exp.findIndex(info => parseInt(info.listUserID) == parseInt(event.senderID)) + 1;
-            return api.sendMessage(`${(await Users.getData(mention[0])).name} currently ranked ${rank} with ${infoUser.exp} messages`, event.threadID, event.messageID);
-}
-else {
-            var { participantIDs } =(await Threads.getData(event.threadID)).threadInfo;
-            //const countMess = (await Currencies.getData(event.senderID)).exp
-            const listUserID = event.participantIDs
-            var id = listUserID //[Math.floor(Math.random() * listUserID.length)];
-            exp = [];
-            var name = await Users.getData(id)
-            for(const idUser of listUserID) {
-            const countMess = await Currencies.getData(idUser);
-            exp.push({"name" : idUser.name, "exp": (typeof countMess.exp == "undefined") ? 0 : countMess.exp, "uid": idUser});
-        }
-            exp.sort(function (a, b) { return b.exp - a.exp });
-            const rank = exp.findIndex(info => parseInt(info.uid) == parseInt(event.senderID)) + 1;
-            const infoUser = exp[rank - 1];
-          
-            return api.sendMessage(`You are ranked ${rank} with ${infoUser.exp} messages`, event.threadID, event.messageID);
-}
-}
+  let msg = "";
+  switch (input) {
+    case "":
+      msg = `🤖✨ *Welcome To Shaan Bot Counting Zone!* ✨🤖
+● ──────────────────── ●
+Yeh wale tag likho or dekh kar hairan ho jao:
+📩 message
+👮‍♂️ admin
+👥 member
+👦 male
+👧 female
+🌈 gei
+💬 allgroup
+🙋‍♂️ alluser\n● ──────────────────── ●\n⎯⃝⃪🦋┼─𝑺𝑯𝑨𝑨𝑵┼•__🦋• ─┼‣🔐⃝ᚔ💛`;
+      break;
+    case "message":
+      msg = `📨 Is Group Me *${threadInfo.messageCount}* messages hain!
+Sab ne full chater-pater macha rakhi hai! 💬🔥\n● ──────────────────── ●\n⎯⃝⃪🦋┼─‎𝑺𝑯𝑨𝑨𝑵┼•__🦋• ─┼‣🔐⃝ᚔ💛`;
+      break;
+    case "admin":
+      msg = `👑 Is Group Ke *${threadInfo.adminIDs.length}* admin hain!
+King/Queen vibes aa rahi hain! 🫅💼\n● ──────────────────── ●\n⎯⃝⃪🦋┼─‎𝑺𝑯𝑨𝑨𝑵┼•__🦋• ─┼‣🔐⃝ᚔ💛`;
+      break;
+    case "member":
+      msg = `👥 Is Me Total Members Hain: *${threadInfo.participantIDs.length}*
+Baby ye tw poori baraat lag rahi hai! 🕺😂\n● ──────────────────── ●\n⎯⃝⃪🦋┼─‎𝑺𝑯𝑨𝑨𝑵┼•__🦋• ─┼‣🔐⃝ᚔ💛`;
+      break;
+    case "male":
+      msg = `👦 Is Group Ke Larko Ki Total List Hain: *${male.length}*
+Mama ke ladly sab yahan chill kar rahe hain! 🦁🔥\n● ──────────────────── ●\n⎯⃝⃪🦋┼─‎𝑺𝑯𝑨𝑨𝑵┼•__🦋• ─┼‣🔐⃝ᚔ💛`;
+      break;
+    case "female":
+      msg = `👧 Is Group Ki Larkiyon Ki Total List Hain: *${female.length}*
+Papa ki pariyan uran bhar rahi hain! 👼✨\n● ──────────────────── ●\n⎯⃝⃪🦋┼─‎𝑺𝑯𝑨𝑨𝑵┼•__🦋• ─┼‣🔐⃝ᚔ💛`;
+      break;
+    case "gei":
+      msg = `🌈 Secret gender wale: *${unknown.length}*
+Full mystery chal rahi hai! 🕵️‍♂️\n● ──────────────────── ●\n⎯⃝⃪🦋┼─‎𝑺𝑯𝑨𝑨𝑵┼•__🦋• ─┼‣🔐⃝ᚔ💛`;
+      break;
+    case "allgroup":
+      msg = `💬 Bot *${allGroups.length}* groups me active hai! 🔥🤖\n● ──────────────────── ●\n⎯⃝⃪🦋┼─‎𝑺𝑯𝑨𝑨𝑵┼•__🦋• ─┼‣🔐⃝ᚔ💛`;
+      break;
+    case "alluser":
+      msg = `🙋 Total Bot Users: *${allUsers.length}*
+Bot ki popularity dekh kar school topper bhi ro raha hai 😎📚\n● ──────────────────── ●\n⎯⃝⃪🦋┼─‎𝑺𝑯𝑨𝑨𝑵┼•__🦋• ─┼‣🔐⃝ᚔ💛`;
+      break;
+    default:
+      msg = `❌ Baby galat tag likh diya!
+Sahi likho: message/admin/member/male/female/gei/allgroup/alluser\n● ──────────────────── ●\n⎯⃝⃪🦋┼─‎𝑺𝑯𝑨𝑨𝑵┼•__🦋• ─┼‣🔐⃝ᚔ💛`;
+  }
+
+  if (threadInfo.imageSrc) {
+    const cacheDir = path.join(__dirname, 'cache');
+    if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
+
+    const imgPath = path.join(cacheDir, `${event.threadID}_dp.jpg`);
+    const file = fs.createWriteStream(imgPath);
+
+    https.get(threadInfo.imageSrc, response => {
+      response.pipe(file);
+      file.on("finish", () => {
+        file.close(() => {
+          const stream = fs.createReadStream(imgPath);
+          send(msg, stream);
+          setTimeout(() => fs.unlinkSync(imgPath), 60000);
+        });
+      });
+    }).on("error", err => {
+      console.log("Image download failed:", err.message);
+      send(msg);
+    });
+  } else {
+    send(msg);
+  }
+};
