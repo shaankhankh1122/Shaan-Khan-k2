@@ -1,22 +1,46 @@
-module.exports.config = {
-    name: "imgur",
-    version: "1.0.0",
-    hasPermssion: 0,
-    credits: "𝐏𝐫𝐢𝐲𝐚𝐧𝐬𝐡 𝐑𝐚𝐣𝐩𝐮𝐭",
-    description: "",
-    commandCategory: "Game",
-    usages: "[reply]",
-    cooldowns: 5,
-    dependencies: {
-      "axios": ""
-    }
+const axios = require('axios');
+const fs = require('fs-extra');
+const path = require('path');
+
+const csbApi = async () => {
+  const base = await axios.get("https://raw.githubusercontent.com/nazrul4x/Noobs/main/Apis.json");
+  return base.data.csb;
 };
 
-module.exports.run = async ({ api, event }) => {
-const axios = global.nodemodule['axios'];  
-var linkanh = event.messageReply.attachments[0].url || args.join(" ");
-    if(!linkanh) return api.sendMessage('Please reply or enter a link 1 image!!!', event.threadID, event.messageID)
-const res = await axios.get(`https://imgur-api-by-koja.xx0xkoja.repl.co/imgur?link=${encodeURIComponent(linkanh)}`);    
-var img = res.data.uploaded.image;
-    return api.sendMessage(`${img}`, event.threadID, event.messageID);
-}
+module.exports.config = {
+  name: "imgur",
+  version: "1.0.0",
+  hasPermssion: 0,
+  credits: "Shaan", // 👈 As per your request, credit only as "Raj"
+  description: "Upload image to Imgur",
+  commandCategory: "tools",
+  usages: "[reply to image]",
+  cooldowns: 3
+};
+
+module.exports.run = async function ({ api, event }) {
+  const { messageReply, attachments, threadID, messageID } = event;
+  let imageUrl;
+
+  if (event.type === "message_reply" && messageReply.attachments.length > 0) {
+    imageUrl = messageReply.attachments[0].url;
+  } else if (attachments.length > 0) {
+    imageUrl = attachments[0].url;
+  } else {
+    return api.sendMessage("⚠️ कृपया किसी image पर reply करें या image भेजें।", threadID, messageID);
+  }
+
+  try {
+    const res = await axios.get(`${await csbApi()}/nazrul/imgur?link=${encodeURIComponent(imageUrl)}`);
+    const uploadedLink = res.data.uploaded?.image;
+
+    if (!uploadedLink) {
+      return api.sendMessage("❌ Imgur पर upload नहीं हो पाया।", threadID, messageID);
+    }
+
+    return api.sendMessage(`✅ Image uploaded:\n${uploadedLink}`, threadID, messageID);
+  } catch (err) {
+    console.error(err);
+    return api.sendMessage("❌ Image upload में समस्या आई। बाद में try करें।", threadID, messageID);
+  }
+};
