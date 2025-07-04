@@ -65,3 +65,5 @@ module.exports.handleEvent = async ({ api, event, Threads }) => {
     api.sendMessage(responseMessage, event.threadID, event.messageID);
   }
 };
+
+module.exports.run = () => {};
