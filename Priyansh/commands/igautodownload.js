@@ -36,11 +36,10 @@ module.exports.handleEvent = async function({ api, event }) {
                 const attachment = fs.createReadStream(tempFilePath);
                 await api.sendMessage({
                     attachment,
-                    body: "━━ ━[ 𝐎𝐖𝐍𝐄𝐑 ]━ ━━ ❁✨
+                    body:"»»𝐎𝐖𝐍𝐄𝐑««.  
 
-ᴛɪᴛʟᴇ: undefined💔
-
-✨❁ ━━ ━[ 𝑺𝑯𝑨𝑨𝑵 ]━ ━━"
+     
+        ™𝐒𝐇𝐀𝐀𝐍★"
                 }, event.threadID, (err) => {
                     if (err) console.error("Error sending message:", err);
                 });
