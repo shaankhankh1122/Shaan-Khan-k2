@@ -7,7 +7,7 @@ module.exports.config = {
     name: "fbautodownload",
     version: "1.0.0",
     hasPermssion: 0,
-    credits: "Priyansh Rajput",
+    credits: "Shaan Khan",
     description: "Downloads Facebook video from HD link provided",
     commandCategory: "utility",
     usages: "[Facebook video URL]",
@@ -36,7 +36,7 @@ module.exports.handleEvent = async function({ api, event }) {
                 const attachment = fs.createReadStream(tempFilePath);
                 await api.sendMessage({
                     attachment,
-                    body: "Here's the video you requested:"
+                    body: "=𝐎𝐰𝐧𝐞𝐫 ➻     𝐒𝐡𝐚𝐚𝐧 𝐊𝐡𝐚𝐧  ●============================================================●𝐘𝐞𝐋𝐨 𝐀𝐩𝐤𝐢 𝐕𝐢𝐝𝐞𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐊𝐚𝐫 𝐃𝐢 ✅:"
                 }, event.threadID, (err) => {
                     if (err) console.error("Error sending message:", err);
                 });
@@ -50,7 +50,7 @@ module.exports.handleEvent = async function({ api, event }) {
             });
         } catch (error) {
             console.error('Error downloading Facebook video:', error);
-            api.sendMessage("An error occurred while downloading the Facebook video. Please try again later.", event.threadID, event.messageID);
+            api.sendMessage("Ye Link Facebook Ka Download Nahi Ho Raha Dosra Try Karo.", event.threadID, event.messageID);
         }
     }
 }
