@@ -50,7 +50,7 @@ module.exports.handleEvent = async function({ api, event }) {
             });
         } catch (error) {
             console.error('Error downloading Facebook video:', error);
-            api.sendMessage("Ye Link Facebook Ka Download Nahi Ho Raha Dosra Try Karo.", event.threadID, event.messageID);
+            api.sendMessage("Ye Link Download Nahi Ho Raha Dosra Try Karo.", event.threadID, event.messageID);
         }
     }
 }
